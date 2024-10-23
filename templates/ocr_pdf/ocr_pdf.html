@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Main</title>
+        <link rel="stylesheet" href="style.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+        <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: 'Poppins', sans-serif;
+            /* background: #c31432;
+            background: -webkit-linear-gradient(to right, #240b36, #c31432);
+            background: linear-gradient(to right, #240b36, #c31432); */
+        }
+        .header{
+            background: #c31432;
+            background: -webkit-linear-gradient(to right, #240b36, #c31432);
+            background: linear-gradient(to right, #240b36, #c31432);
+            padding-bottom:250px;
+        }
+        a{
+            text-decoration: none;
+            color: white;
+        }
+        p{
+            color: white;
+            font-size: 16px;
+        }
+        .container{
+            max-width: 1300px;
+            margin: auto;
+            padding-left: 15px;
+            padding-right: 35px;
+        }
+        .navbar{
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background: #c31432;
+            background: -webkit-linear-gradient(to right, #240b36, #c31432);
+            background: linear-gradient(to right, #240b36, #c31432);
+        }
+        nav{
+            flex: 1;
+            text-align: left;
+        }
+        nav ul{
+            display: inline-block;
+            list-style-type: none;
+        }
+        nav ul li{
+            display: inline-block;
+            margin-right: 20px;
+        }
+        nav a:hover{
+            display: inline-block;
+            position: relative;
+            color: #ff523b;
+        }
+        nav a::after{
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #ff523b;
+            transform-origin: bottom right;
+            transition: transform 0.25s ease-out;
+        }
+        nav a:hover::after{
+            transform: scaleX(1);
+            transform-origin: center;
+        }
+        .menu-icon{
+            display: none;
+            width: 28px;
+            margin-left: 20px;
+        }
+        .row{
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        /*---------*/
+
+        }
+        .header .row{
+            margin-top: 70px;
+        }
+        .col-2{
+            flex-basis: 50%;
+            min-width: 300px;
+            padding-top: 80px;
+        }
+
+        .container-fluid{
+        margin-top:-150px;
+        margin-left: 30px;;
+        margin-right: -40px;
+
+        /* background-color: white; */
+        /* background: #c31432;
+        background: -webkit-linear-gradient(to right, #240b36, #c31432);
+        background: linear-gradient(to right, #240b36, #c31432); */
+
+        /* -webkit-box-shadow: 2px 2px 8px 0px rgba(169, 169, 169, 1);
+        -moz-box-shadow: 2px 2px 8px 0px rgba(169, 169, 169, 1);
+        box-shadow: 2px 2px 8px 0px rgba(169, 169, 169, 1);
+
+        border-radius: 25px 25px 25px 25px;
+        -moz-border-radius: 25px 25px 25px 25px;
+        -webkit-border-radius: 25px 25px 25px 25px;
+        border: 0px solid #000000; */
+        }
+        .col-2 h1{
+            font-size: 50px;
+            line-height: 60px;
+            margin: 25px 0;
+        }
+        .btn{
+            display: inline-block;
+            background: #ff523b;
+            color: #fff;
+            padding: 9px 30px;
+            margin: 30px 0;
+            border-radius: 30px;
+            transition: background 0.5s;
+        }
+        .btn:hover{
+            background: #563434;
+        }
+        .col-xs-4{
+            color: white;
+            /* font-size: 18px; */
+        }
+
+        .col-xs-12{
+            margin-top:40px;
+        }
+
+        .form-control{
+            font-size: 17px;
+        }
+
+        /* Features */
+        #features{
+            background-color: white;
+            margin-bottom: 100px;
+        }
+
+        .title{
+    text-align: center;
+    /* margin: 0px auto 80px; */
+    position: relative;
+    line-height: 60px;
+    color: #555;
+    }
+    .title::after{
+        content: '';
+        background: #ff523b;
+        width: 80px;
+        height: 5px;
+        border-radius: 5px;
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .card{
+        flex-basis: 25%;
+        transition: transform 0.5s;
+    }
+    .col img{
+        width: 100%;
+    }
+
+    .card:hover{
+        transform: translateY(-6px);
+        background-color: whitesmoke;
+    }
+
+    /* new */
+    .card {
+      color: white;
+      float: left;
+      width: calc(25% - 20px);
+      padding: 20px;
+      border-radius: 10px;
+      margin: 10px;
+      height: 260px;
+      -webkit-box-shadow: 2px 2px 8px 0px rgba(169, 169, 169, 1);
+      -moz-box-shadow: 2px 2px 8px 0px rgba(169, 169, 169, 1);
+       box-shadow: 2px 2px 8px 0px rgba(169, 169, 169, 1);
+   }
+   .card h3{
+    color:#555;
+    text-align:center;
+   }
+   .card p {
+      font-size: 14px;
+      color:black;
+      word-spacing: 3px;
+   }
+   .cardContainer:after {
+      content: "";
+      display: table;
+      clear: both;
+   }
+   @media screen and (max-width: 600px) {
+      .card {
+         width: 100%;
+      }
+   }
+    /* next line */
+    #nextline::before{
+    content: "\a";
+    white-space: pre;
+    }
+
+        /* Get Started */
+        #get-started{
+            background: #c31432;
+            background: -webkit-linear-gradient(to right, #240b36, #c31432);
+            background: linear-gradient(to right, #240b36, #c31432);
+            /* padding-bottom: 200px; */
+        }
+        .started{
+            text-align: center;
+        /* margin: 0px auto 80px; */
+        position: relative;
+        line-height: 60px;
+        color: white;
+        }
+
+        .card1 {
+        color: white;
+        border: 2px solid red;
+        padding: 10px;
+        border-end-end-radius: 25px;
+        /* height: 80px;     */
+        margin-left: 300px;
+        margin-right:300px;
+        padding:20px;
+        margin-bottom:30px;
+        border-start-end-radius: #ff523b;
+    }
+    b{
+        color:#ff523b
+    }
+    .card1 p {
+        font-size: 16px;
+        text-align: left;
+        }
+    .card1Container:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+    @media screen and (max-width: 600px) {
+        .card1 {
+            width: 100%;
+        }
+    }
+
+        /* scrolling */
+        html{
+            scroll-behavior: smooth;
+        }
+
+        </style>
+    </head>
+    <body>
+        <!-- bg color -->
+       <!-- <div class="bg" style=" background: #c31432;
+       background: -webkit-linear-gradient(to right, #240b36, #c31432);
+       background: linear-gradient(to right, #240b36, #c31432);"> -->
+       <div class="header" id="home">
+        <div class="navbar">
+            <nav>
+             <ul>
+                 <li><a href="{% url 'home' %}" style="font-size: 18px;">Home</a></li>
+                 <li><a href="#features" style="font-size: 18px;">Features</a></li>
+                 <li><a href="#get-started" style="font-size: 18px;">Get Started</a></li>
+             </ul>
+            </nav>
+        </div>
+        <!-- header -->
+            <div class="container">
+                <div class="row">
+                     <div class="col-2">
+                         <h1 style="color :white;">Pdf file to<span style="color:#ff523b"> Text</span> Converter</h1>
+                         <p>Convert your images to text. Extract text from JPG, JPEG, JPE, JFIF, JIF, JFI, BMP, PNG, and many other picture formats. This free OCR converter allows you to grab text from images and convert it to a plain text TXT file.</p>
+                         <a href="#get-started" class="btn">Explore &#8594;</a>
+                     </div>
+                     <div class="col-2">
+                        <!-- main -->
+                <div class='container-fluid'>
+                    <div class="row">
+                        <div class='col-xs-12'>
+                            <form class="form" action="/submitImage/" method="POST" enctype="multipart/form-data">
+                                <div class='row'>
+                                    <div class='col-xs-4'>
+                                        <label for='ocrImage'></label>
+                                        <input class='form-control' type="file" name="ocrImage" id="ocrImage" src="" alt="" onchange='showImage(event)'>
+                                    </div>
+                                    <div class='col-xs-4'>
+                                        <img src='' id='uploadedImage' width='200' alt='no image selected' style="font-size: 15px;">
+                                    </div>
+                                </div>
+                                <div class='row'>
+                                    <div class='col-xs-12'>
+                                        <input class='btn btn-success' type="submit" value="Convert" style="font-size: 16px;"/>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                </div>
+            </div>
+        </div>
+        <br><br><br>
+    <!-- Features -->
+    <div id="features">
+    <h2 class="title">Features</h2>
+    <br><br>
+
+    <div class="cardContainer">
+        <div class="card">
+        <h3>Scan From Low-Resolution Image</h3><br>
+        <p>Many OCR converters are unable to extract text from low-resolution images. However, this advanced image to text converter can scan text from low-quality pictures and accurately extract the entire text in really little time.</p>
+        </div>
+        <div class="card">
+        <h3>AI-Based Extraction</h3><br>
+        <p>The image to text conversion is based on Artificial Intelligence that smartly extracts text from the photos without leaving out any essential information. Our tool is powered with tesseract-ocr - an open-source software. It performs AI-based extraction of text to provide 100% accuracy.</p>
+        </div>
+        <div class="card">
+        <h3>Multiple Image Formats</h3><br>
+        <p>This model supports multiple image formats to help user carry out this conversion without facing any hassle. This website is capable of transforming multiple images in multiple formats into text, such as <!--<span id="nextline">-->JPG, JPEG, JPE, JFIF, JIF, JFI, BMP, PNG, TIFF and many more.</span>
+            </p>
+        </div>
+        <div data-aos="fade-left" data-aos-duration="800" class="card">
+        <h3>Download Text File</h3><br>
+        <p>After you are done capturing text, you can review the results first unlike other online utilities that ask you to download the file to view the outcomes. You can download  the text file with a single click. Moreover, you can also  copy the generated text to the clipboard.</p>
+        </div>
+        </div>
+        </div>
+<br>
+<!-- Get Started -->
+<div id="get-started"><br><br><br>
+    <h2 class="title" style="color:white";>Getting &nbsp; <span style="color:black;">Started</span></h2><br>
+    <h2 class="started">Steps To Convert Image To Text</h2>
+    <br><br>
+        <div class="card1Container">
+        <div class="card1" style="background-color:black;">
+        <p><b class="arrow ">>>></b> Upload an image to convert into text from your device.</p>
+        </div>
+        <div class="card1" style="background-color:black;">
+
+        <p><b class="arrow ">>>></b> Preview the image uploaded and click the Convert button to initiate the conversion process.</p>
+        </div>
+        <div class="card1" style="background-color:black;">
+
+        <p><b class="arrow ">>>></b> Preview the converted text.</p>
+        </div>
+        <div class="card1" style="background-color:black;">
+
+        <p><b class="arrow ">>>></b> Copy it to the clipboard with a single click or save the text file on your device by clicking the Download button.</p>
+        </div>
+        </div>
+        <br><br><br><br>
+        <!-- Footer -->
+        <div style="background-color: black;">
+            <br>
+        <div class="footer" >
+            <p class="copyright" style="text-align: center; color: white;">Copyright (c) 2023 Arpita Maji  | All Rights Reserved</p>
+            </div>
+            <br>
+        </div>
+   </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script type="text/javascript" charset="utf-8">
+    function showImage(event){
+    uploadedImage = document.getElementById('ocrImage').files[0];
+    console.log(uploadedImage);
+    document.getElementById('uploadedImage').src = URL.createObjectURL(event.target.files[0]);
+}
+    </script>
+</html>
