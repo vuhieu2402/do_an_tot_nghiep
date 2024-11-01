@@ -10,13 +10,12 @@ def noise_removal(image):
     image = cv2.medianBlur(image, 3)
     return image
 
-def sharpen_image(image):
-    # Tạo kernel để làm đậm nét
+
+def enhance_text(image):
     kernel = np.array([[0, -1, 0],
                        [-1, 5, -1],
                        [0, -1, 0]])
-    sharpened = cv2.filter2D(image, -1, kernel)
-    return sharpened
+    return cv2.filter2D(image, -1, kernel)
 
 def apply_threshold(image, threshold_value=150):
     # Áp dụng threshold để chuyển ảnh thành đen trắng
@@ -29,7 +28,7 @@ def process_image(image_path):
 
     # Áp dụng các bước xử lý ảnh
     img_denoised = noise_removal(img)
-    img_sharpened = sharpen_image(img_denoised)
+    img_sharpened = enhance_text(img_denoised)
     img_binary = apply_threshold(img_sharpened)
 
     return img_binary

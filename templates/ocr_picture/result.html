@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .navbar {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background: #c31432;
+            background: linear-gradient(to right, #240b36, #c31432);
+        }
+        nav {
+            flex: 1;
+            text-align: left;
+        }
+        nav ul {
+            display: inline-block;
+            list-style-type: none;
+        }
+        nav ul li {
+            display: inline-block;
+            margin-right: 20px;
+        }
+        nav a:hover {
+            display: inline-block;
+            position: relative;
+            color: #ff523b;
+        }
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #ff523b;
+            transform-origin: bottom right;
+            transition: transform 0.25s ease-out;
+        }
+        nav a:hover::after {
+            transform: scaleX(1);
+            transform-origin: center;
+        }
+        .btn {
+            display: inline-block;
+            background: #ff523b;
+            color: #fff;
+            padding: 9px 30px;
+            margin: 30px 0;
+            border-radius: 30px;
+            transition: background 0.5s;
+        }
+        .btn:hover {
+            background: #563434;
+        }
+        a {
+            text-decoration: none;
+            color: white;
+        }
+        h1 {
+            margin-top: 40px;
+        }
+        #editor-container {
+            margin-top: 40px;
+            height: 400px; /* Chiều cao của TinyMCE editor */
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="header" id="home">
+        <div class="navbar">
+            <nav>
+                <ul>
+                    <li><a href="{% url 'home' %}" style="font-size: 18px;">Home</a></li>
+                    <li><a href="#features" style="font-size: 18px;">Features</a></li>
+                    <li><a href="#get-started" style="font-size: 18px;">Get Started</a></li>
+                </ul>
+            </nav>
+        </div>
+        <center><h1>Image to Text Converter</h1></center>
+
+        <div class='container-fluid'>
+            <div class="result-container">
+                <!-- Hiển thị kết quả OCR -->
+                <textarea id="editor" style="display:none;">{{ result_html|safe }}</textarea> <!-- Sử dụng 'safe' để hiển thị HTML -->
+                <div id="editor-container"></div> <!-- Chỗ để TinyMCE editor -->
+            </div>
+
+        </div>
+
+        <div class="button">
+            <form method="get" accept-charset="utf-8">
+                <button type="button" class='btn btn-info' id="button1" onclick='copyToClipboard()'>Copy</button>
+                <button type="button" class='btn btn-info' id="button2" onclick='downloadDocx()'>Download</button>
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <div style="background-color: black;">
+            <br>
+            <div class="footer">
+                <p class="copyright" style="text-align: center; color: white;">Made by Arpita Maji </p>
+            </div>
+            <br>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docx@6.0.3/build/index.min.js"></script>
+    <script src="https://cdn.tiny.cloud/1/mvq6qls7aj0hv3f11zi06w9nt17yn5148axz78wlm1nrbw9u/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+
+
+        function formatOCRContent(ocrContent) {
+            // Tách các đoạn văn và chuyển đổi ký tự xuống dòng thành <br> để giữ định dạng ngắt dòng
+            return ocrContent
+                .split('\n\n')  // Tách các đoạn văn tại hai ngắt dòng liên tiếp
+                .map(paragraph => `<p>${paragraph.replace(/\n/g, '<br>')}</p>`)  // Đổi \n thành <br> cho ngắt dòng
+                .join('');  // Ghép các đoạn văn lại thành chuỗi HTML
+        }
+
+        tinymce.init({
+            selector: '#editor-container',
+            height: 400,
+            menubar: false,
+            plugins: 'table',
+            toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright | table',
+            setup: function (editor) {
+                editor.on('init', function () {
+                    // Lấy nội dung từ thẻ textarea và định dạng trước khi nạp vào TinyMCE
+                    const ocrContent = document.getElementById('editor').value;
+                    const formattedContent = formatOCRContent(ocrContent);
+                    editor.setContent(formattedContent);
+                });
+            }
+        });
+
+
+
+        function copyToClipboard() {
+            // Lấy nội dung HTML từ TinyMCE
+            const content = tinyMCE.activeEditor.getContent();
+
+            // Tạo một Blob từ nội dung HTML
+            const blob = new Blob([content], { type: 'text/html' });
+
+            // Tạo một đối tượng ClipboardItem
+            const clipboardItem = new ClipboardItem({ 'text/html': blob });
+
+            // Sao chép nội dung vào clipboard
+            navigator.clipboard.write([clipboardItem]).then(() => {
+                alert("Nội dung đã được sao chép!");
+            }).catch(err => {
+                console.error('Có lỗi xảy ra khi sao chép: ', err);
+            });
+        }
+
+        async function downloadDocx() {
+        // Lấy nội dung HTML từ TinyMCE sau khi chỉnh sửa
+            const content = tinyMCE.activeEditor.getContent();
+
+            // Sử dụng một div tạm để chứa nội dung HTML và chuyển đổi nó
+            const tempDiv = document.createElement("div");
+            tempDiv.innerHTML = content;
+
+             // Hàm chuyển đổi nội dung HTML thành docx.js elements
+            function parseHtmlToDocx(element) {
+                const docxElements = [];
+
+                element.childNodes.forEach(node => {
+                    if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+                        docxElements.push(new docx.Paragraph({
+                            children: [new docx.TextRun(node.textContent.trim())]
+                        }));
+                    } else if (node.nodeName === "P") {
+                        // Đoạn văn
+                        const paragraphChildren = parseChildrenToTextRuns(node);
+                        docxElements.push(new docx.Paragraph({ children: paragraphChildren, spacing: { after: 200 } }));
+                    } else if (node.nodeName === "BR") {
+                        // Ngắt dòng
+                        docxElements.push(new docx.Paragraph(""));
+                    } else if (node.nodeName === "TABLE") {
+                        // Bảng
+                        const rows = Array.from(node.getElementsByTagName("tr")).map(row => {
+                            const cells = Array.from(row.getElementsByTagName("td")).map(cell =>
+                                new docx.TableCell({ children: [new docx.Paragraph(cell.innerText)] })
+                            );
+                            return new docx.TableRow({ children: cells });
+                        });
+                        docxElements.push(new docx.Table({ rows: rows }));
+                    } else if (node.nodeType === Node.ELEMENT_NODE) {
+                        // Xử lý các phần tử HTML khác
+                        const childElements = parseHtmlToDocx(node);
+                        docxElements.push(...childElements);
+                    }
+                });
+
+                return docxElements;
+            }
+
+            function parseChildrenToTextRuns(node) {
+                const runs = [];
+                node.childNodes.forEach(child => {
+                    if (child.nodeType === Node.TEXT_NODE) {
+                        runs.push(new docx.TextRun(child.textContent));
+                    } else if (child.nodeName === "STRONG" || child.nodeName === "B") {
+                        runs.push(new docx.TextRun({ text: child.innerText, bold: true }));
+                    } else if (child.nodeName === "EM" || child.nodeName === "I") {
+                        runs.push(new docx.TextRun({ text: child.innerText, italics: true }));
+                    } else if (child.nodeType === Node.ELEMENT_NODE) {
+                        // Đệ quy xử lý các phần tử con
+                        runs.push(...parseChildrenToTextRuns(child));
+                    }
+                });
+                return runs;
+            }
+
+
+
+
+        // Chuyển đổi nội dung TinyMCE thành docx elements
+        const docxContent = parseHtmlToDocx(tempDiv);
+
+        // Tạo document từ nội dung đã được chuyển đổi
+        const doc = new docx.Document({
+            sections: [{ properties: {}, children: docxContent }],
+        });
+
+        // Tạo và tải xuống file .docx
+        const blob = await docx.Packer.toBlob(doc);
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = "OCR_Edited_Result.docx";
+        link.click();
+    }
+
+
+
+
+
+
+
+
+    </script>
+
+<!--<script>-->
+<!--  tinymce.init({-->
+<!--    selector: 'textarea',-->
+<!--    plugins: [-->
+<!--      // Core editing features-->
+<!--      'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',-->
+<!--      // Your account includes a free trial of TinyMCE premium features-->
+<!--      // Try the most popular premium features until Nov 12, 2024:-->
+<!--      'checklist', 'mediaembed', 'casechange', 'export', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'editimage', 'advtemplate', 'ai', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown',-->
+<!--      // Early access to document converters-->
+<!--      'importword', 'exportword', 'exportpdf'-->
+<!--    ],-->
+<!--    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',-->
+<!--    tinycomments_mode: 'embedded',-->
+<!--    tinycomments_author: 'Author name',-->
+<!--    mergetags_list: [-->
+<!--      { value: 'First.Name', title: 'First Name' },-->
+<!--      { value: 'Email', title: 'Email' },-->
+<!--    ],-->
+<!--    ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),-->
+<!--    exportpdf_converter_options: { 'format': 'Letter', 'margin_top': '1in', 'margin_right': '1in', 'margin_bottom': '1in', 'margin_left': '1in' },-->
+<!--    exportword_converter_options: { 'document': { 'size': 'Letter' } },-->
+<!--    importword_converter_options: { 'formatting': { 'styles': 'inline', 'resets': 'inline',	'defaults': 'inline', } },-->
+<!--  });-->
+<!--</script>-->
+
+
+
+</body>
+</html>

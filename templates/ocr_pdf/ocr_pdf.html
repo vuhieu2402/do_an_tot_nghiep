@@ -308,22 +308,14 @@
                 <div class='container-fluid'>
                     <div class="row">
                         <div class='col-xs-12'>
-                            <form class="form" action="/submitImage/" method="POST" enctype="multipart/form-data">
-                                <div class='row'>
-                                    <div class='col-xs-4'>
-                                        <label for='ocrImage'></label>
-                                        <input class='form-control' type="file" name="ocrImage" id="ocrImage" src="" alt="" onchange='showImage(event)'>
-                                    </div>
-                                    <div class='col-xs-4'>
-                                        <img src='' id='uploadedImage' width='200' alt='no image selected' style="font-size: 15px;">
-                                    </div>
-                                </div>
-                                <div class='row'>
-                                    <div class='col-xs-12'>
-                                        <input class='btn btn-success' type="submit" value="Convert" style="font-size: 16px;"/>
-                                    </div>
-                                </div>
+                           <form method="post" id="uploadForm" enctype="multipart/form-data" action="{% url 'convert_pdf' %}">
+                                {% csrf_token %}
+                                <input type="file" id="pdfFile" name="pdf" accept="application/pdf" onchange="showPdf(event)" class="form-control-file">
+                                <button type="submit" class="btn btn-success" style="font-size: 16px;">Convert</button>
                             </form>
+
+                            <div id="pdfPreviewContainer"></div>
+
                         </div>
                     </div>
                 </div>
@@ -390,13 +382,51 @@
             <br>
         </div>
    </body>
+    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script type="text/javascript" charset="utf-8">
-    function showImage(event){
-    uploadedImage = document.getElementById('ocrImage').files[0];
-    console.log(uploadedImage);
-    document.getElementById('uploadedImage').src = URL.createObjectURL(event.target.files[0]);
+    function showPdf(event) {
+    const file = event.target.files[0];
+    const pdfPreviewContainer = document.getElementById('pdfPreviewContainer');
+
+    // Xóa nội dung cũ (nếu cần)
+    pdfPreviewContainer.innerHTML = '';
+
+    if (file && file.type === 'application/pdf') {
+        const fileReader = new FileReader();
+
+        fileReader.onload = function() {
+            const typedArray = new Uint8Array(this.result);
+
+            pdfjsLib.getDocument(typedArray).promise.then(function(pdf) {
+                // Hiển thị trang đầu tiên của PDF
+                pdf.getPage(1).then(function(page) {
+                    const viewport = page.getViewport({ scale: 0.8 });
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    // Vẽ trang PDF lên canvas
+                    page.render({
+                        canvasContext: context,
+                        viewport: viewport
+                    });
+
+                    // Thêm canvas vào container xem trước PDF
+                    pdfPreviewContainer.appendChild(canvas);
+                });
+            });
+        };
+        fileReader.readAsArrayBuffer(file);
+    } else {
+        alert("Vui lòng chọn một tệp PDF.");
+    }
 }
+
+
     </script>
 </html>
