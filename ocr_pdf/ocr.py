@@ -35,20 +35,21 @@ def process_uploaded_pdf(uploaded_pdf):
             file_bytes = np.asarray(bytearray(img_bytes.read()), dtype=np.uint8)
             img = cv2.imdecode(file_bytes, cv2.IMREAD_GRAYSCALE)
 
-            # Áp dụng giảm nhiễu
-            img = noise_removal(img)
+            # # Áp dụng giảm nhiễu
+            # img = noise_removal(img)
+            # Làm đậm nét chữ
+            enhanced_img = enhance_text(img)
 
             # Áp dụng threshold để chuyển ảnh thành đen trắng
-            _, binary_img = cv2.threshold(img, 150, 255, cv2.THRESH_BINARY_INV)
+            _, binary_img = cv2.threshold(enhanced_img, 150, 255, cv2.THRESH_BINARY_INV)
 
-            # Làm đậm nét chữ
-            enhanced_img = enhance_text(binary_img)
+
 
             # Tìm các đường kẻ ngang và dọc để xác định bảng
             horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (25, 1))
             vertical_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 25))
-            horizontal_lines = cv2.morphologyEx(enhanced_img, cv2.MORPH_OPEN, horizontal_kernel, iterations=2)
-            vertical_lines = cv2.morphologyEx(enhanced_img, cv2.MORPH_OPEN, vertical_kernel, iterations=2)
+            horizontal_lines = cv2.morphologyEx(binary_img, cv2.MORPH_OPEN, horizontal_kernel, iterations=2)
+            vertical_lines = cv2.morphologyEx(binary_img, cv2.MORPH_OPEN, vertical_kernel, iterations=2)
             table_area = cv2.add(horizontal_lines, vertical_lines)
 
             # Tìm contours để phân chia bảng

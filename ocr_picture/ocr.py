@@ -6,6 +6,7 @@ from docx import Document
 from docx.oxml.ns import nsdecls
 from docx.oxml import parse_xml
 import docx2txt
+from process_img.utils import noise_removal, enhance_text
 
 def process_uploaded_image(uploaded_files):
     result_items = []  # Tạo danh sách chứa kết quả từ tất cả các ảnh
@@ -17,6 +18,11 @@ def process_uploaded_image(uploaded_files):
 
         image_bytes = uploaded_file.read()
         img = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_GRAYSCALE)
+
+        # Bước 1: Loại bỏ nhiễu và làm nổi bật văn bản
+        img = noise_removal(img)
+        img = enhance_text(img)
+
 
         _, binary_img = cv2.threshold(img, 150, 255, cv2.THRESH_BINARY_INV)
 

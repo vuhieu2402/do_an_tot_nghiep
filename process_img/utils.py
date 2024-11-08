@@ -11,6 +11,26 @@ def noise_removal(image):
     return image
 
 
+# def noise_removal(image):
+#     # Tăng kích thước kernel cho các bước dilate và erode
+#     kernel = np.ones((3, 3), np.uint8)
+#
+#     # Loại bỏ nhiễu nhỏ hơn và làm dày các đường nét với phép toán morphology
+#     image = cv2.dilate(image, kernel, iterations=1)
+#     image = cv2.erode(image, kernel, iterations=1)
+#     image = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)
+#
+#     # Sử dụng Gaussian Blur thay vì Median Blur để làm mờ nhiễu
+#     image = cv2.GaussianBlur(image, (5, 5), 0)
+#
+#     # Thêm Adaptive Threshold để giữ độ tương phản tốt
+#     image = cv2.adaptiveThreshold(
+#         image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2
+#     )
+#
+#     return image
+
+
 def enhance_text(image):
     kernel = np.array([[0, -1, 0],
                        [-1, 5, -1],
