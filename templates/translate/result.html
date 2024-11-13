@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+       body {
+            margin: 0 !important;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+        .navbar {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background: #c31432;
+            background: linear-gradient(to right, #240b36, #c31432);
+        }
+        nav {
+            flex: 1;
+            text-align: left;
+        }
+        nav ul {
+            display: inline-block;
+            list-style-type: none;
+        }
+        nav ul li {
+            display: inline-block;
+            margin-right: 20px;
+        }
+        nav a:hover {
+            display: inline-block;
+            position: relative;
+            color: #ff523b;
+        }
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #ff523b;
+            transform-origin: bottom right;
+            transition: transform 0.25s ease-out;
+        }
+        nav a:hover::after {
+            transform: scaleX(1);
+            transform-origin: center;
+        }
+
+        .docx-content {
+            border: 1px solid #ccc;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            width: 50%;
+        }
+
+        .content{
+            margin: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #ff523b;
+            color: #fff;
+            padding: 9px 30px;
+            margin: 30px 0;
+            border-radius: 30px;
+            transition: background 0.5s;
+        }
+        .btn:hover {
+            background: #563434;
+        }
+        a {
+            text-decoration: none;
+            color: white;
+        }
+        h1 {
+            margin-top: 40px;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="header" id="home">
+        <div class="navbar">
+            <nav>
+                <ul>
+                    <li><a href="{% url 'home' %}" style="font-size: 18px;">Home</a></li>
+                    <li><a href="#features" style="font-size: 18px;">Features</a></li>
+                    <li><a href="#get-started" style="font-size: 18px;">Get Started</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="content">
+            <h1>Kết quả chuyển đổi</h1>
+            <a href="{% url 'download_translated_docx' %}" class="btn btn-info">Download DOCX</a>
+
+            <!-- Hiển thị bản xem trước -->
+            <div class="docx-content">
+                <!-- Nội dung DOCX sẽ được hiển thị ở đây -->
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="background-color: black;">
+            <br>
+            <div class="footer">
+                <p class="copyright" style="text-align: center; color: white;">Made by Arpita Maji</p>
+            </div>
+            <br>
+        </div>
+    </div>
+
+    <!-- Include Mammoth.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+
+    <script>
+        // URL to fetch the DOCX file from the server (replace with your server-side URL)
+        var docxUrl = "{% url 'download_translated_docx' %}";
+
+        // Fetch the DOCX file from the server using AJAX
+        fetch(docxUrl)
+            .then(response => response.arrayBuffer())
+            .then(arrayBuffer => {
+                // Convert DOCX to HTML using Mammoth.js
+                mammoth.convertToHtml({ arrayBuffer: arrayBuffer })
+                    .then(function(result) {
+                        // Display the converted HTML content in the docx-content div
+                        document.querySelector(".docx-content").innerHTML = result.value;
+                    })
+                    .catch(function(err) {
+                        console.log("Error converting DOCX:", err);
+                    });
+            })
+            .catch(function(err) {
+                console.log("Error fetching DOCX file:", err);
+            });
+    </script>
+</body>
+
+</html>

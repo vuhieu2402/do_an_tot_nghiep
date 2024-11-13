@@ -277,51 +277,6 @@
         html{
             scroll-behavior: smooth;
         }
-        .function-buttons {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-        .function-buttons button {
-            padding: 10px 20px;
-            font-size: 18px;
-            cursor: pointer;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
-        .function-buttons button:hover {
-            background-color: #45a049;
-        }
-        .function-buttons {
-    display: flex;
-    gap: 10px; /* Tạo khoảng cách giữa các nút */
-}
-
-.translate-container {
-    position: relative;
-    display: inline-block; /* Giữ các nút chính theo hàng ngang */
-}
-
-.hidden-options {
-    display: none;
-    flex-direction: column; /* Hiển thị các nút con theo chiều dọc */
-    position: absolute;
-    top: 100%; /* Đặt các nút con ngay dưới nút "Translate" */
-    left: 0;
-    background-color: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #ccc;
-    padding: 5px;
-    z-index: 1;
-}
-
-.show-options {
-    display: flex;
-}
-
 
         </style>
     </head>
@@ -341,20 +296,37 @@
             </nav>
         </div>
         <!-- header -->
-        <div class="function-buttons">
-            <button onclick="window.location.href='/convert-pdf2docx/'">Chuyển từ file Pdf sang docx</button>
-<!--            <button onclick="window.location.href='/translate/'">Translate</button>-->
-           <div class="translate-container">
-        <button onclick="toggleOptions()">Translate</button>
-        <div id="translate-options" class="hidden-options">
-            <button onclick="window.location.href='/translate-pdf/'">PDF</button>
-            <button onclick="window.location.href='/translate-docx/'">DOC</button>
-        </div>
-    </div>
-            <button onclick="window.location.href='/ocr-pdf/'">OCR từ file Pdf sang text</button>
-            <button onclick="window.location.href='/ocr-picture/'">OCR từ ảnh sang text</button>
+            <div class="container">
+                <div class="row">
+                     <div class="col-2">
+                         <h1 style="color :white;">Translate pdf to<span style="color:#ff523b"> Text</span> Converter</h1>
+                         <p>Convert your images to text. Extract text from JPG, JPEG, JPE, JFIF, JIF, JFI, BMP, PNG, and many other picture formats. This free OCR converter allows you to grab text from images and convert it to a plain text TXT file.</p>
+                         <a href="#get-started" class="btn">Explore &#8594;</a>
+                     </div>
+                     <div class="col-2">
+                        <!-- main -->
+                <div class='container-fluid'>
+                    <div class="row">
+                        <div class='col-xs-12'>
+                            <form method="post" id="uploadForm" enctype="multipart/form-data" action="{% url 'translate_docx' %}">
+                                {% csrf_token %}
 
-        </div>
+                                <label for="sourceLanguage"></label>
+                                {{ form.source_language }}
+                                <label for="targetLanguage"></label>
+                                {{ form.target_language }}
+                                {{ form.docx_file }}
+                                <button type="submit" class="btn btn-success" style="font-size: 16px;">Convert</button>
+                            </form>
+
+                            <div id="pdfPreviewContainer"></div>
+
+                        </div>
+                    </div>
+                </div>
+                </div>
+                </div>
+            </div>
         </div>
         <br><br><br>
     <!-- Features -->
@@ -415,18 +387,49 @@
             <br>
         </div>
    </body>
+    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script type="text/javascript" charset="utf-8">
-    function showImage(event){
-    uploadedImage = document.getElementById('ocrImage').files[0];
-    console.log(uploadedImage);
-    document.getElementById('uploadedImage').src = URL.createObjectURL(event.target.files[0]);
-}
+    function showPdf(event) {
+    const file = event.target.files[0];
+    const pdfPreviewContainer = document.getElementById('pdfPreviewContainer');
 
-function toggleOptions() {
-    const options = document.getElementById('translate-options');
-    options.classList.toggle('show-options');
+    // Xóa nội dung cũ (nếu cần)
+    pdfPreviewContainer.innerHTML = '';
+
+    if (file && file.type === 'application/pdf') {
+        const fileReader = new FileReader();
+
+        fileReader.onload = function() {
+            const typedArray = new Uint8Array(this.result);
+
+            pdfjsLib.getDocument(typedArray).promise.then(function(pdf) {
+                // Hiển thị trang đầu tiên của PDF
+                pdf.getPage(1).then(function(page) {
+                    const viewport = page.getViewport({ scale: 0.8 });
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    // Vẽ trang PDF lên canvas
+                    page.render({
+                        canvasContext: context,
+                        viewport: viewport
+                    });
+
+                    // Thêm canvas vào container xem trước PDF
+                    pdfPreviewContainer.appendChild(canvas);
+                });
+            });
+        };
+        fileReader.readAsArrayBuffer(file);
+    } else {
+        alert("Vui lòng chọn một tệp PDF.");
+    }
 }
 
 

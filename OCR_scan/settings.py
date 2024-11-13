@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'ocr_pdf',
     'home',
     'pdf_to_docx',
+    'translate',
 ]
 
 MIDDLEWARE = [

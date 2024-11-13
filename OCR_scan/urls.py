@@ -8,4 +8,5 @@ urlpatterns = [
     path('', include('ocr_picture.urls')),
     path('', include('ocr_pdf.urls')),
     path('', include('pdf_to_docx.urls')),
+    path('', include('translate.urls')),
 ]
