@@ -44,9 +44,9 @@ def convert_and_translate_pdf_to_docx_view(request):
 
                 # Translate and update the text in the DOCX
                 for para in doc.paragraphs:
-                    if para.text.strip():  # Ensure it's not an empty paragraph
+                    if para.text.strip():
                         try:
-                            # Tách các phần như "A.", "B." và giữ nguyên chúng
+
                             preserved_parts = re.findall(r'^[A-Z]\.', para.text)
                             if preserved_parts:
                                 cleaned_text = re.sub(r'^[A-Z]\.', '', para.text).strip()
@@ -55,11 +55,11 @@ def convert_and_translate_pdf_to_docx_view(request):
                             else:
                                 translated_paragraph = translator.translate(para.text, src=source_language, dest=target_language).text
 
-                            para.text = translated_paragraph  # Update the paragraph with translated text
-                            translated_text += translated_paragraph + "\n"  # Concatenate all translated text
+                            para.text = translated_paragraph
+                            translated_text += translated_paragraph + "\n"
                         except Exception as e:
                             print(f"Error during translation: {e}")
-                            para.text = para.text  # Keep the original text in case of error
+                            para.text = para.text
                             translated_text += para.text + "\n"  # Keep the original text in the concatenated result
 
                 # Save the translated DOCX

@@ -2,11 +2,60 @@ import os
 import cv2
 import numpy as np
 import pytesseract
-from docx import Document
-from docx.oxml.ns import nsdecls
 from docx.oxml import parse_xml
-import docx2txt
+from pytesseract import Output
+
 from process_img.utils import noise_removal, enhance_text
+from PIL import Image
+from paddleocr import PaddleOCR, draw_ocr
+from vietocr.tool.predictor import Predictor
+from vietocr.tool.config import Cfg
+
+
+# Khởi tạo PaddleOCR
+ocr = PaddleOCR()
+
+# Khởi tạo VietOCR
+config = Cfg.load_config_from_name('vgg_transformer')
+# config['weights'] = 'https://vocr.vn/data/vietocr/vgg_transformer.pth'  # Thay bằng đường dẫn đến mô hình
+config['weights'] = 'https://vocr.vn/data/vietocr/vgg_transformer.pth'
+config['device'] = 'cpu'  # Chạy trên CPU
+vietocr = Predictor(config)
+
+
+def ocr_with_vietocr(image):
+    # Chuyển đổi ảnh numpy sang PIL Image nếu cần
+    if isinstance(image, np.ndarray):
+        image = Image.fromarray(image)
+
+    # Chuyển đổi ảnh sang hệ màu RGB
+    image_rgb = image.convert("RGB")
+
+    result = ocr.ocr(np.array(image_rgb))
+
+    if not result or not result[0]:
+        return ''
+
+    text_from_image = ''
+    for line in result[0]:
+        bounding_box = line[0]
+        text = line[1][0]
+        confidence = line[1][1]
+
+        # Cắt phần ảnh tương ứng với bounding box
+        cropped_image = image_rgb.crop((
+            int(bounding_box[0][0]),  # x_min
+            int(bounding_box[0][1]),  # y_min
+            int(bounding_box[2][0]),  # x_max
+            int(bounding_box[2][1])  # y_max
+        ))
+
+        # Dự đoán từ bằng VietOCR
+        predicted_text = vietocr.predict(cropped_image)
+        text_from_image += predicted_text + '\n'
+
+    return text_from_image.strip()
+
 
 def process_uploaded_image(uploaded_files):
     result_items = []  # Tạo danh sách chứa kết quả từ tất cả các ảnh
@@ -20,7 +69,7 @@ def process_uploaded_image(uploaded_files):
         img = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_GRAYSCALE)
 
         # Bước 1: Loại bỏ nhiễu và làm nổi bật văn bản
-        img = noise_removal(img)
+
         img = enhance_text(img)
 
 
@@ -45,7 +94,7 @@ def process_uploaded_image(uploaded_files):
             for x, y, w, h in bounding_boxes:
                 cv2.rectangle(img_text_only, (x, y), (x + w, y + h), (0, 0, 0), -1)
 
-            text_from_image = pytesseract.image_to_string(img_text_only, lang='vie').strip()
+            text_from_image = ocr_with_vietocr(img_text_only)
             result_items.append((float('inf'), text_from_image))
             doc.add_paragraph(text_from_image)
 
@@ -53,8 +102,8 @@ def process_uploaded_image(uploaded_files):
             for x, y, w, h in bounding_boxes:
                 if w > 50 and h > 20:
                     cell_img = img[y:y + h, x:x + w]
-                    text = pytesseract.image_to_string(cell_img).strip()
-                    table_data.append((x, y, text))
+                    cell_text = ocr_with_vietocr(cell_img)
+                    table_data.append((x, y, cell_text))
 
             if table_data:
                 sorted_table_data = sorted(table_data, key=lambda t: (t[1], t[0]))
@@ -82,7 +131,7 @@ def process_uploaded_image(uploaded_files):
                         col_idx += 1
 
         else:
-            text_from_image = pytesseract.image_to_string(binary_img, lang='vie').strip()
+            text_from_image = ocr_with_vietocr(binary_img)
             result_items.append((float('inf'), text_from_image))
             doc.add_paragraph(text_from_image)
 
