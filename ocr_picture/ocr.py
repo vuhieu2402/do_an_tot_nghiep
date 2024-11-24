@@ -16,9 +16,10 @@ from vietocr.tool.config import Cfg
 ocr = PaddleOCR()
 
 # Khởi tạo VietOCR
-config = Cfg.load_config_from_name('vgg_transformer')
+config = Cfg.load_config_from_name('vgg_seq2seq')
 # config['weights'] = 'https://vocr.vn/data/vietocr/vgg_transformer.pth'  # Thay bằng đường dẫn đến mô hình
-config['weights'] = 'https://vocr.vn/data/vietocr/vgg_transformer.pth'
+# config['weights'] = 'https://vocr.vn/data/vietocr/vgg_transformer.pth'
+config['weights'] = 'https://vocr.vn/data/vietocr/vgg_seq2seq.pth'
 config['device'] = 'cpu'  # Chạy trên CPU
 vietocr = Predictor(config)
 
